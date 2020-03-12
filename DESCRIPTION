@@ -1,0 +1,17 @@
+Package: MSFA
+Title: Maximum Likelihood Estimation and Bayesian analysis of MSFA models 
+Version: 0.85
+Author: Roberta De Vito, Ruggero Bellio
+Maintainer: Roberta De Vito <devito.roberta@gmail.com>
+Description: Fits the Multi-Study Factor Analysis model  via 
+    the ECM algorithm and via a Bayesian approach.
+Depends: R (>= 3.5.0)
+Imports: gplots, psych, robust, statmod, pracma, matlab
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+LazyLoad: yes
+RoxygenNote: 7.0.2
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr

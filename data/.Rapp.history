@@ -1,0 +1,4 @@
+load("/Users/rbellio/Dropbox/tesiRDV/MSFA/data/data_subtype.rda")
+ls()
+str(data_subtype)
+q()

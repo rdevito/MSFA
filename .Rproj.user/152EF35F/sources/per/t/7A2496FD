@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1583870653177.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1578584573",
+    "id" : "7A2496FD",
+    "lastKnownWriteTime" : 1583962524,
+    "last_content_update" : 1583962524248,
+    "path" : "~/Dropbox/tesiRDV/MSFA/R/Bayesian.R",
+    "project_path" : "R/Bayesian.R",
+    "properties" : {
+        "cursorPosition" : "868,2",
+        "scrollLine" : "858"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
