@@ -1,7 +1,7 @@
 # MSFA
 
 author: Roberta De Vito, Ruggero Bellio
-modified by: Kate Hoff Shutta
+modified by: Kate Hoff Shutta (kshutta@umass.edu)
 
 Fits the Multi-Study Factor Analysis model  via  [ECM algorithm](#1-fitting-a-msfa-model-via-the-ecm-algorithm) and via  [a Bayesian approach](#2-bayesian-analysis-of-a-msfa-model).
 
