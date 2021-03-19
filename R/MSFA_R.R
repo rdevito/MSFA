@@ -363,7 +363,7 @@ vcov_msfa <- function(X_s, mle, getgrad = TRUE)
 #' @references Pison, G., Rousseeuw, P.J., Filzmoser, P. and Croux, C. (2003). Robust factor analysis. Journal
 #' of Multivariate Analysis, 84, 145-172.
 ecm_msfa <- function(X_s, start, nIt = 50000, tol = 10^-7, constraint = "block_lower2", robust = FALSE,
-                     corr = TRUE, mcd = FALSE, trace = TRUE)
+                     corr = TRUE, mcd = FALSE, trace = TRUE, extend=FALSE)
 {
   #######
   S <- length(X_s)
@@ -544,7 +544,40 @@ ecm_msfa <- function(X_s, start, nIt = 50000, tol = 10^-7, constraint = "block_l
   res <- list(Phi = Phi, Lambda_s = Lambda_s, psi_s = psi_s, loglik = l1,
               AIC = AIC, BIC = BIC, npar=npar,
               iter = i,  cov_s = cov_s,  n_s = n_s, constraint=constraint)
- return(res)
+  if(extend)
+  {
+    Gamma_trivial = diag(p)
+    for(pred in 1:p)
+    {
+      minVar = 10000
+      for(s in 1:S)
+      {
+        if(psi_s[[s]][pred] < minVar)
+          minVar = psi_s[[s]][pred]
+
+        Gamma_trivial[pred,pred] = 0.5*minVar
+        if(minVar == 10000) print("[MSFA-X] High variance issue")
+      }
+    }
+
+    H_s_trivial = list()
+    for(s in 1:S)
+    {
+      H_s_trivial[[s]] = diag(psi_s[[s]])-Gamma_trivial
+    }
+
+    res$Gamma = Gamma_trivial
+    res$H_s = H_s_trivial
+    res$SharedCov = Phi%*%t(Phi) + Gamma_trivial
+    res$StudyCov = list()
+    for(s in 1:S)
+      res$StudyCov[[s]] = Lambda_s[[s]] %*% t(Lambda_s[[s]]) + H_s_trivial[[s]]
+    res$SharedPrec = solve(res$SharedCov)
+    res$StudyPrec = lapply(res$StudyCov,solve)
+
+  }
+
+  return(res)
 }
 
 
