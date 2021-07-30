@@ -577,6 +577,8 @@ ecm_msfa <- function(X_s, start, nIt = 50000, tol = 10^-7, constraint = "block_l
 
   }
 
+  res$X_s = X_s
+
   return(res)
 }
 
@@ -671,7 +673,6 @@ ecm_fa <- function(X_s, tot_s, nIt = 50000, tol = 10^-7, block_lower = TRUE, rob
 
     ######update of Phi: not needed
 
-
     ########CM3 ---------------------------------------------------------------------------------------
 
     ######expected values
@@ -715,7 +716,126 @@ ecm_fa <- function(X_s, tot_s, nIt = 50000, tol = 10^-7, block_lower = TRUE, rob
   return(res)
 }
 
+checkConstraint = function(p,k,j_s,s)
+{
+  lhs = p*k-k*(k-1)/2
 
+  for(i in 1:s)
+  {
+    lhs = lhs + p*j_s[[i]]-j_s[[i]]*(j_s[[i]]-1)/2
+  }
+
+  lhs = lhs + s*p
+  rhs = s*p*(p+1)/2
+
+  return(lhs <= rhs)
+}
+
+# Use eigendecomposition-based method with AIC/BIC
+# to figure out the number of shared and study-specific factors to use
+get_factor_count = function(X_s,method="cng")
+{
+  print(paste("[get_factor_count] METHOD:",method))
+  nTot = list()
+  S = length(X_s)
+  for(s in 1:S)
+  {
+    # apply cng to get total number
+    if(method == "bartlett")
+      nTot[[s]] = nFactors::nBartlett(data.frame(X_s[[s]]),N=nrow(X_s[[s]]))$nFactors[1] # take Bartlett method
+    if(method == "bentler")
+      nTot[[s]] = nFactors::nBentler(data.frame(X_s[[s]]),N=nrow(X_s[[s]]))$nFactors
+    if(method == "cng")
+      nTot[[s]] = nFactors::nCng(data.frame(X_s[[s]]),model="factors")$nFactors# cattell, nelson, gorsuch
+    if(method == "mreg")
+      nTot[[s]] = nFactors::nMreg(data.frame(X_s[[s]]),model="factors")$nFactors[1] # take b
+    if(method == "paran")
+      nTot[[s]]= paran(data.frame(X_s[[s]]),cfa=T)$Retained
+    if(method == "scree")
+      nTot[[s]] = nFactors::nScree(data.frame(X_s[[s]]),model="factors")$Components$noc # take the optimal coordinates results (can implement others later)
+    if(method == "seScree")
+      nTot[[s]] = nFactors::nSeScree(data.frame(X_s[[s]]),model="factors")$nFactors[2] # take the R2: se was unreasonably high
+  }
+
+  # check to see if there are too many factors, as in factanal
+  p = ncol(X_s[[1]]) # assume same number of predictors for every study
+  #dof <- 0.5 * ((p - factors)^2 - p - factors) from factanal
+  #dof = 0.5*(p^2 - 2*p*factors + factors^2 - p - factors)
+  #dof = 0.5*(factors^2 - (2*p+1)*factors + p^2-p)
+  roots = c((2*p+1 - sqrt((2*p+1)^2 - 4*(p^2-p)))/2,(2*p+1 + sqrt((2*p+1)^2 - 4*(p^2-p)))/2)
+  # find max number of factors
+
+  # print("nTot")
+  # print(nTot)
+  # print("Roots")
+  # print(roots)
+  # problem: what if nTot is bigger than roots[1]
+  for(s in 1:S)
+  {
+    if(nTot[[s]] > floor(roots[1]))
+    {
+      nTot[[s]] = floor(roots[1]) # can't handle more factors than this
+    }
+  }
+
+  maxShared = min(unlist(nTot))-1
+  print(paste("MaxShared",maxShared))
+
+  if(maxShared < 1)
+  {
+    print("[get_factor_count] Error: insufficient shared factors")
+    next
+  }
+  # Iterate through 1:maxShared and check average AIC/BIC for all models
+  aics = list()
+  bics = list()
+
+  for(k in 1:maxShared)
+  {
+    j_s = list()
+    for(s in 1:S)
+    {
+      j_s[[s]] = nTot[[s]] - k # n study-specific factors = n total - n shared
+    }
+
+    # put this into a try-catch
+    if(checkConstraint(p,k,j_s,length(j_s)))
+    {
+      start_k = tryCatch(expr = {start_msfa(X_s,k=k,j_s=unlist(j_s),method="fa")},
+                         error = {function(e) NULL})
+
+      if(!is.null(start_k))
+      {
+        start_k = start_msfa(X_s,k=k,j_s=unlist(j_s),method="fa")
+        start_k$Phi = as.matrix(start_k$Phi)
+        start_k$Lambda_s = lapply(start_k$Lambda_s,as.matrix)
+
+        mod_k = ecm_msfa(X_s,start=start_k,extend=T,nIt=1000)
+        aics[[k]] = mod_k$AIC
+        bics[[k]] = mod_k$BIC
+      }
+
+      else
+      {
+        print(paste("[get_factor_count] Not able to start fa with k=",k))
+
+        aics[[k]]=NA
+        bics[[k]]=NA
+      }
+    }
+
+    else
+    {
+      print(paste("[get_factor_count] Constraint not satisfied for k=",k))
+      aics[[k]]=NA
+      bics[[k]]=NA
+    }
+  }
+
+
+  # BIC is preferred
+  return(list("nTot"=nTot,"k_minAIC" = which.min(aics),
+              "k_minBIC" = which.min(bics)))}
 
 
 #' Immune System Data
