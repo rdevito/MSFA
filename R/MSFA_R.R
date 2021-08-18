@@ -731,16 +731,18 @@ checkConstraint = function(p,k,j_s,s)
   return(lhs <= rhs)
 }
 
-# Use eigendecomposition-based method with AIC/BIC
-# to figure out the number of shared and study-specific factors to use
-get_factor_count = function(X_s,method="cng")
+get_factor_count_bayes = function(X_s, method = "cng")
 {
+  # run factanal on each dataset to determine k* and j* (j_s* = tot_s - k*)
+
   print(paste("[get_factor_count] METHOD:",method))
   nTot = list()
   S = length(X_s)
+  p = ncol(X_s[[1]])
+
   for(s in 1:S)
   {
-    # apply cng to get total number
+    # apply one of these methods to get total number
     if(method == "bartlett")
       nTot[[s]] = nFactors::nBartlett(data.frame(X_s[[s]]),N=nrow(X_s[[s]]))$nFactors[1] # take Bartlett method
     if(method == "bentler")
@@ -763,12 +765,6 @@ get_factor_count = function(X_s,method="cng")
   #dof = 0.5*(p^2 - 2*p*factors + factors^2 - p - factors)
   #dof = 0.5*(factors^2 - (2*p+1)*factors + p^2-p)
   roots = c((2*p+1 - sqrt((2*p+1)^2 - 4*(p^2-p)))/2,(2*p+1 + sqrt((2*p+1)^2 - 4*(p^2-p)))/2)
-  # find max number of factors
-
-  # print("nTot")
-  # print(nTot)
-  # print("Roots")
-  # print(roots)
   # problem: what if nTot is bigger than roots[1]
   for(s in 1:S)
   {
@@ -779,28 +775,20 @@ get_factor_count = function(X_s,method="cng")
   }
 
   maxShared = min(unlist(nTot))-1
-  print(paste("MaxShared",maxShared))
 
-  if(maxShared < 1)
+  # fit MSFA with the k* and j*
+  k = maxShared
+  minShared = 1
+
+  j_s = list()
+  for(s in 1:S)
+    j_s[[s]]=nTot[[s]]-minShared
+
+  while(k > 0)
   {
-    print("[get_factor_count] Error: insufficient shared factors")
-    next
-  }
-  # Iterate through 1:maxShared and check average AIC/BIC for all models
-  aics = list()
-  bics = list()
-
-  for(k in 1:maxShared)
-  {
-    j_s = list()
-    for(s in 1:S)
-    {
-      j_s[[s]] = nTot[[s]] - k # n study-specific factors = n total - n shared
-    }
-
-    # put this into a try-catch
     if(checkConstraint(p,k,j_s,length(j_s)))
     {
+
       start_k = tryCatch(expr = {start_msfa(X_s,k=k,j_s=unlist(j_s),method="fa")},
                          error = {function(e) NULL})
 
@@ -809,34 +797,45 @@ get_factor_count = function(X_s,method="cng")
         start_k = start_msfa(X_s,k=k,j_s=unlist(j_s),method="fa")
         start_k$Phi = as.matrix(start_k$Phi)
         start_k$Lambda_s = lapply(start_k$Lambda_s,as.matrix)
-
-        mod_k = ecm_msfa(X_s,start=start_k,extend=T,nIt=1000)
-        aics[[k]] = mod_k$AIC
-        bics[[k]] = mod_k$BIC
+        mod_k = ecm_msfa(X_s,start=start_k,extend=T,tol=1e-3) #,constraint="block_lower1")
+        k = 0
       }
 
       else
       {
         print(paste("[get_factor_count] Not able to start fa with k=",k))
-
-        aics[[k]]=NA
-        bics[[k]]=NA
+        k = k-1
       }
     }
-
     else
-    {
-      print(paste("[get_factor_count] Constraint not satisfied for k=",k))
-      aics[[k]]=NA
-      bics[[k]]=NA
-    }
+    {k = k-1}
   }
 
+  # get eigenvalues that explain > 0.05 of total sum of eigenvalues
 
-  # BIC is preferred
-  return(list("nTot"=nTot,"k_minAIC" = which.min(aics),
-              "k_minBIC" = which.min(bics)))}
+  sigma_phi = mod_k$Phi %*% t(mod_k$Phi)
+  val_eigen = eigen(sigma_phi)$values
+  scree.plot(val_eigen, title="Screeplot shared")
+  prop_var = val_eigen / sum(val_eigen)
 
+  nShared = sum(prop_var > 0.05)
+
+  j_s = list()
+  for(s in 1:S)
+  {
+    # do same eigenvalue approach for the study specific matrices
+    sigma_lambda_s = mod_k$Lambda_s[[s]] %*% t(mod_k$Lambda_s[[s]])
+    val_eigen = eigen(sigma_lambda_s)$values
+    scree.plot(val_eigen, title=paste("Screeplot Study",s))
+    prop_var = val_eigen / sum(val_eigen)
+    j_s[[s]]= sum(prop_var > 0.05)
+
+  }
+
+  k = nShared
+
+  return(list("k"=k, "j_s" = j_s))
+}
 
 #' Immune System Data
 #
