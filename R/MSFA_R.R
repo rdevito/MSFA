@@ -816,7 +816,6 @@ get_factor_count_bayes = function(X_s, method = "cng")
 
   sigma_phi = mod_k$Phi %*% t(mod_k$Phi)
   val_eigen = eigen(sigma_phi)$values
-  scree.plot(val_eigen, title="Screeplot shared")
   prop_var = val_eigen / sum(val_eigen)
 
   nShared = sum(prop_var > 0.05)
@@ -827,7 +826,6 @@ get_factor_count_bayes = function(X_s, method = "cng")
     # do same eigenvalue approach for the study specific matrices
     sigma_lambda_s = mod_k$Lambda_s[[s]] %*% t(mod_k$Lambda_s[[s]])
     val_eigen = eigen(sigma_lambda_s)$values
-    scree.plot(val_eigen, title=paste("Screeplot Study",s))
     prop_var = val_eigen / sum(val_eigen)
     j_s[[s]]= sum(prop_var > 0.05)
 
