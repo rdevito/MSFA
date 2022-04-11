@@ -13,7 +13,8 @@ ecm_msfa(
   robust = FALSE,
   corr = TRUE,
   mcd = FALSE,
-  trace = TRUE
+  trace = TRUE,
+  extend = FALSE
 )
 }
 \arguments{

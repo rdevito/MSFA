@@ -731,6 +731,7 @@ checkConstraint = function(p,k,j_s,s)
   return(lhs <= rhs)
 }
 
+#' @export
 get_factor_count_bayes = function(X_s, method = "cng")
 {
   # run factanal on each dataset to determine k* and j* (j_s* = tot_s - k*)
