@@ -825,7 +825,6 @@ get_factor_count_bayes = function(X_s, method = "cng")
 
   sigma_phi = mod_k$Phi %*% t(mod_k$Phi)
   val_eigen = eigen(sigma_phi)$values
-  #scree.plot(val_eigen, title="Screeplot shared")
   prop_var = val_eigen / sum(val_eigen)
 
   nShared = sum(prop_var > 0.05)
