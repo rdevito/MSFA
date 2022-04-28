@@ -2,6 +2,7 @@
 
 export(ecm_fa)
 export(ecm_msfa)
+export(get_factor_count_bayes)
 export(sp_OP)
 export(sp_eigen)
 export(sp_fa)

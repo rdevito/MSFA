@@ -4,7 +4,8 @@
 \name{estim_bc}
 \alias{estim_bc}
 \title{Breast Cancer Estimation Results}
-\format{f_scoretot: the estimated common factor score for all the observations, as defined in De Vito et al. (2020)
+\format{
+f_scoretot: the estimated common factor score for all the observations, as defined in De Vito et al. (2020)
 
 Phi_sd: the estimated common factor loading matrix, a matrix of size \eqn{6362 \times 8}{6362 x 8}. This
 matrix is obtained by the SD method, described in De Vito et al. (2020)
@@ -13,7 +14,8 @@ Lambda_CAL: the estimated study-specific loading matrix for the CAL dataset, a m
 \eqn{6362 \times 6}{6362 x 6} obtained by the SD method.
 
 Lambda_MAINZ: the estimated study-specific loading matrix for the CAL dataset, a matrix of size
-\eqn{6362 \times 10}{6362 x 10} obtained by the SD method.}
+\eqn{6362 \times 10}{6362 x 10} obtained by the SD method.
+}
 \usage{
 estim_bc
 }

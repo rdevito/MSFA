@@ -4,7 +4,9 @@
 \name{data_immune}
 \alias{data_immune}
 \title{Immune System Data}
-\format{A list of two matrices, each with 63 columns and 285 and 140 rows, respectively.}
+\format{
+A list of two matrices, each with 63 columns and 285 and 140 rows, respectively.
+}
 \usage{
 data_immune
 }

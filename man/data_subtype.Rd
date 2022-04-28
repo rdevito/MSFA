@@ -4,10 +4,12 @@
 \name{data_subtype}
 \alias{data_subtype}
 \title{Breast Cancer Subtypes}
-\format{X_s_demo: the demographic information of the patients (Haibe-Kains et al., 2012) after removing the normal-like subtype
+\format{
+X_s_demo: the demographic information of the patients (Haibe-Kains et al., 2012) after removing the normal-like subtype
 
 f_scoretot_sub: the estimated common factor score, as defined in De Vito et al. (2020), after removing
-the normal-like subtype}
+the normal-like subtype
+}
 \usage{
 data_subtype
 }

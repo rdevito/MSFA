@@ -4,7 +4,8 @@
 \name{sim_scenario4}
 \alias{sim_scenario4}
 \title{Setting for Scenario 4 of the Simulation Study}
-\format{Phi: the true common factor loading matrix with elements greater or equal than 0.7 in absolute value
+\format{
+Phi: the true common factor loading matrix with elements greater or equal than 0.7 in absolute value
 
 Phi_sd: the estimated common factor loading matrix using the SD method, as defined in De Vito et al. (2020). The matrix
         includes only the rows with at least one element  greater or equal than 0.7 in absolute value
@@ -14,7 +15,8 @@ equal than 0.7 in absolute value
 
 RV_op: the RV coefficient between the estimated OP common factor loadings and the true common factor loadings over 50 datasets
 
-RV_sd: the RV coefficient between the estimated SD common factor loadings and the true common factor loadings over 50 datasets}
+RV_sd: the RV coefficient between the estimated SD common factor loadings and the true common factor loadings over 50 datasets
+}
 \usage{
 sim_scenario4
 }

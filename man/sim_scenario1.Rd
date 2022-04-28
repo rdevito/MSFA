@@ -4,7 +4,8 @@
 \name{sim_scenario1}
 \alias{sim_scenario1}
 \title{Setting for Scenario 1 of the Simulation Study}
-\format{Phi: the true common factor loading matrix
+\format{
+Phi: the true common factor loading matrix
 
 Lambda_s: a list of four matrices containing the true study-specific factor loadings matrices
 
@@ -19,7 +20,8 @@ Phi_op: the estimated common factor loading matrix using the OP method, as defin
 
 RV_op: the RV coefficient between the estimated OP common factor loadings and the true common factor loadings over 50 datasets
 
-RV_sd: the RV coefficient between the estimated SD common factor loadings and the true common factor loadings over 50 datasets}
+RV_sd: the RV coefficient between the estimated SD common factor loadings and the true common factor loadings over 50 datasets
+}
 \usage{
 sim_scenario1
 }

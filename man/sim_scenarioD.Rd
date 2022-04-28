@@ -4,7 +4,8 @@
 \name{sim_scenarioD}
 \alias{sim_scenarioD}
 \title{Setting for the simulation scenario  of the Discussion section}
-\format{Phi_shared2: the estimated common factor loading matrix using the SD method after generating the data with a factors partially shared by two studies over four,
+\format{
+Phi_shared2: the estimated common factor loading matrix using the SD method after generating the data with a factors partially shared by two studies over four,
 as defined in De Vito et al. (2020)
 
 Phi_shared3: the estimated common factor loading matrix using the SD method after generating the data with a factors partially shared by three studies over four,
@@ -12,7 +13,8 @@ as defined in De Vito et al. (2020)
 
 RV_sd2: the RV coefficient between the estimated SD common factor loadings and the true factors partially shared by two studies over 50 datasets
 
-RV_sd3: the RV coefficient between the estimated SD common factor loadings and the true factors partially shared by three studies over 50 datasets}
+RV_sd3: the RV coefficient between the estimated SD common factor loadings and the true factors partially shared by three studies over 50 datasets
+}
 \usage{
 sim_scenarioD
 }

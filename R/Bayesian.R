@@ -820,23 +820,6 @@ sp_fa <- function(dat, k, trace = TRUE, nprint = 1000, control = list(...), ...)
 #'
 #'
 #'
-#' A data set used by De Vito et al. (2020) in the case study application. The data sets consider genes
-#' measured in all the seven studies and focus on the fifty percent of genes with higher variance in each study.
-#'
-#' @format A list of seven different data matrices, each with 6362 genes (variables) and sample size of (118, 353, 200, 99, 198, 133, 344).
-#' This is a collection of publicly available microarray studies compiled by Haibe-Kains et al. (2012). This data considers,
-#' for each gene, only the probe-set with maximum mean. Also, the analysis considers genes measured in all the seven studies
-#' and focus on 50 percent of genes with higher variance in each study.
-#' @examples
-#' \dontrun{
-#' The commands below show how to get the data: the breast cancer microarray studies
-#' are publicly available.
-#' data(data_breastCancer05)
-#' X_s <- data_breastCancer05
-#' S <- 7
-#' j_s <- c(7, 8, 2, 3, 4, 2, 4)
-#' out_breastcancer <- sp_msfa(X_s,  k = 8,  j_s = j_s, trace = FALSE)}
-"data_breastCancer05"
 
 
 
